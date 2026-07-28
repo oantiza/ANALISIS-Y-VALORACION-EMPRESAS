@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "bbdd-activos-financieros"
+  },
+  "targets": {
+    "bbdd-activos-financieros": {
+      "hosting": {
+        "analisis": ["oaa-analisis"]
+      }
+    }
+  }
+}

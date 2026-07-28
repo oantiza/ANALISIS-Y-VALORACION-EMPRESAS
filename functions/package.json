@@ -1,0 +1,20 @@
+{
+  "name": "analisis-functions",
+  "version": "1.0.0",
+  "description": "API de la herramienta de analisis y valoracion de empresas OAA (proxy EODHD con cache Firestore y fuentes de respaldo)",
+  "type": "module",
+  "main": "index.js",
+  "engines": { "node": "20" },
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions:analisis"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "fast-xml-parser": "^4.5.0",
+    "firebase-admin": "^12.7.0",
+    "firebase-functions": "^6.1.0"
+  },
+  "private": true
+}

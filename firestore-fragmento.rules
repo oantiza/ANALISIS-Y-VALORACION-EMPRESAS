@@ -1,0 +1,29 @@
+// ============================================================
+// FRAGMENTO de reglas Firestore — Herramienta de Análisis OAA
+// ============================================================
+// NO desplegar este fichero directamente: el proyecto
+// bbdd-activos-financieros ya tiene reglas de la app BDB-ACTIVOS.
+// Copia estos bloques DENTRO de `match /databases/{database}/documents { ... }`
+// del firestore.rules existente (C:\Users\oanti\Proyectos\BDB\3-BDB-ACTIVOS_app)
+// y despliega las reglas desde AQUEL proyecto, no desde este repo.
+
+// --- Herramienta de Análisis y Valoración de Empresas (av_*) ---
+function esOscar() {
+  return request.auth != null
+    && request.auth.token.email == 'oantiza@gmail.com'
+    && request.auth.token.email_verified == true;
+}
+
+match /av_watchlist/{docId} {
+  allow read, write: if esOscar();
+}
+
+match /av_informes/{docId} {
+  allow read, write: if esOscar();
+}
+
+// La caché la escriben solo las Cloud Functions (Admin SDK, ignora reglas).
+// El cliente no necesita leerla directamente.
+match /av_cache/{docId} {
+  allow read, write: if false;
+}
