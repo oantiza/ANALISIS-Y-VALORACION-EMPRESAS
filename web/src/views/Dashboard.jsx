@@ -4,11 +4,28 @@ import { collection, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase
 import { db } from '../firebase.js';
 import { api } from '../api.js';
 import { Section } from '../components/Kpi.jsx';
-import { fmtPrice, fmtPct, clsPN, fmtDateTime } from '../lib/format.js';
+import { fmtPrice, fmtPct, fmtNum, clsPN } from '../lib/format.js';
+
+function consLabel(r) {
+  if (r == null) return null;
+  if (r >= 4.5) return 'Compra fuerte';
+  if (r >= 3.5) return 'Compra';
+  if (r >= 2.5) return 'Mantener';
+  if (r >= 1.5) return 'Venta';
+  return 'Venta fuerte';
+}
+
+function consCls(r) {
+  if (r == null) return '';
+  if (r >= 3.5) return 'pos';
+  if (r < 2.5) return 'neg';
+  return '';
+}
 
 export default function Dashboard() {
   const [items, setItems] = useState(null);
   const [quotes, setQuotes] = useState({});
+  const [cons, setCons] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,11 +42,16 @@ export default function Dashboard() {
     if (!items?.length) return;
     let alive = true;
     (async () => {
-      const results = await Promise.allSettled(items.map((it) => api(`/quote/${it.symbol}`)));
+      const [qr, cr] = await Promise.all([
+        Promise.allSettled(items.map((it) => api(`/quote/${it.symbol}`))),
+        Promise.allSettled(items.map((it) => api(`/consensus/${it.symbol}`)))
+      ]);
       if (!alive) return;
-      const map = {};
-      results.forEach((r, i) => { if (r.status === 'fulfilled') map[items[i].symbol] = r.value; });
-      setQuotes(map);
+      const qMap = {}, cMap = {};
+      qr.forEach((r, i) => { if (r.status === 'fulfilled') qMap[items[i].symbol] = r.value; });
+      cr.forEach((r, i) => { if (r.status === 'fulfilled') cMap[items[i].symbol] = r.value; });
+      setQuotes(qMap);
+      setCons(cMap);
     })();
     return () => { alive = false; };
   }, [items]);
@@ -57,31 +79,46 @@ export default function Dashboard() {
 
       {items?.length > 0 && (
         <Section>
-          <div className="card">
+          <div className="card" style={{ overflowX: 'auto' }}>
             <table className="tbl">
               <thead>
                 <tr>
                   <th className="l">Valor</th>
-                  <th className="l">Mercado</th>
                   <th>Último</th>
                   <th>Var. día</th>
-                  <th>Actualizado</th>
+                  <th>Precio objetivo</th>
+                  <th>Potencial</th>
+                  <th>Consenso</th>
                   <th />
                 </tr>
               </thead>
               <tbody>
                 {items.map((it) => {
                   const q = quotes[it.symbol];
+                  const c = cons[it.symbol];
+                  const target = c?.targetPrice ?? null;
+                  const potencial = q?.price && target ? ((target - q.price) / q.price) * 100 : null;
+                  const counts = c && c.strongBuy != null
+                    ? `${(c.strongBuy ?? 0) + (c.buy ?? 0)} compra · ${c.hold ?? 0} mantener · ${(c.sell ?? 0) + (c.strongSell ?? 0)} venta`
+                    : null;
                   return (
                     <tr key={it.symbol} className="click" onClick={() => navigate(`/empresa/${it.symbol}`)}>
                       <td className="l">
                         <strong>{it.name || it.symbol}</strong>
-                        <div className="tiny">{it.symbol}</div>
+                        <div className="tiny">{it.symbol} · {it.exchange || '—'}</div>
                       </td>
-                      <td className="l muted">{it.exchange || '—'}</td>
                       <td className="num">{q ? fmtPrice(q.price, it.currency) : '…'}</td>
                       <td className={`num ${q ? clsPN(q.changePct) : ''}`}>{q ? fmtPct(q.changePct) : '…'}</td>
-                      <td className="num tiny">{q ? fmtDateTime(q.timestamp || q.fetchedAt) : ''}</td>
+                      <td className="num">{target ? fmtPrice(target, c?.currency || it.currency) : '—'}</td>
+                      <td className={`num ${clsPN(potencial)}`}>{potencial != null ? fmtPct(potencial, 1) : '—'}</td>
+                      <td className="num" title={counts || 'Sin cobertura de analistas'}>
+                        {c?.rating != null ? (
+                          <>
+                            <span className={consCls(c.rating)}>{consLabel(c.rating)}</span>
+                            <div className="tiny">{fmtNum(c.rating, 1)} / 5</div>
+                          </>
+                        ) : '—'}
+                      </td>
                       <td>
                         <button className="mini-btn" title="Quitar de la lista" onClick={(e) => quitar(e, it.symbol)}>✕</button>
                       </td>
@@ -92,7 +129,8 @@ export default function Dashboard() {
             </table>
           </div>
           <p className="tiny" style={{ marginTop: 10 }}>
-            Cotizaciones vía EODHD con respaldo de Yahoo Finance · pueden llevar retardo según mercado.
+            Cotizaciones vía EODHD (respaldo Yahoo) · precio objetivo y consenso del agregado de analistas de EODHD,
+            actualizados con los fundamentales (máx. 7 días) · pasa el ratón por el consenso para ver el desglose.
           </p>
         </Section>
       )}

@@ -78,6 +78,33 @@ export function buildRouter() {
     } catch (err) { next(err); }
   });
 
+  // --- Consenso de analistas (extraído de los fundamentales cacheados) ---
+  r.get('/consensus/:symbol', async (req, res, next) => {
+    try {
+      const symbol = normSymbol(req.params.symbol);
+      const out = await cached(`fund_${symbol}`, TTL.fundamentals, () =>
+        firstOk([[ 'eodhd', () => eodhd.getFundamentals(symbol) ]])
+      );
+      const f = out.data || {};
+      const ar = f.AnalystRatings || {};
+      const h = f.Highlights || {};
+      const num = (x) => (x == null || x === 'NA' ? null : Number(x));
+      res.json({
+        symbol,
+        source: out.source,
+        fetchedAt: out.fetchedAt,
+        rating: num(ar.Rating),
+        targetPrice: num(h.WallStreetTargetPrice) ?? num(ar.TargetPrice),
+        strongBuy: num(ar.StrongBuy),
+        buy: num(ar.Buy),
+        hold: num(ar.Hold),
+        sell: num(ar.Sell),
+        strongSell: num(ar.StrongSell),
+        currency: f.General?.CurrencyCode ?? null
+      });
+    } catch (err) { next(err); }
+  });
+
   // --- Serie histórica diaria ---
   r.get('/eod/:symbol', async (req, res, next) => {
     try {

@@ -10,6 +10,7 @@ const CLIENT_TTL = {
   '/search': 10 * 60_000,
   '/quote': 60_000,
   '/fundamentals': 30 * 60_000,
+  '/consensus': 30 * 60_000,
   '/eod': 30 * 60_000,
   '/technicals': 30 * 60_000,
   '/news': 10 * 60_000
