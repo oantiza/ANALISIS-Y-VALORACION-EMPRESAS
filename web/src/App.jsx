@@ -9,21 +9,24 @@ import SearchBox from './components/SearchBox.jsx';
 
 export default function App() {
   const [user, setUser] = useState(undefined); // undefined = comprobando
+  const [denegado, setDenegado] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     return onAuthStateChanged(auth, (u) => {
       if (u && !ALLOWED_EMAILS.includes((u.email || '').toLowerCase())) {
+        setDenegado(u.email || 'esa cuenta');
         signOut(auth);
         setUser(null);
         return;
       }
+      if (u) setDenegado(null);
       setUser(u);
     });
   }, []);
 
   if (user === undefined) return <div className="loading">Cargando…</div>;
-  if (!user) return <Login />;
+  if (!user) return <Login denegado={denegado} />;
 
   return (
     <div className="app">
