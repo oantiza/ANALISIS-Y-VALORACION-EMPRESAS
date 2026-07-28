@@ -2,7 +2,7 @@
 export const REGION = 'europe-west1';
 
 // Correos con acceso a la API (uso personal)
-export const ALLOWED_EMAILS = ['oantiza@gmail.com'];
+export const ALLOWED_EMAILS = ['oantiza@gmail.com', 'aceberiognosspelius@gmail.com'];
 
 // TTLs de caché (segundos) por tipo de dato — pensados para minimizar
 // coste Firestore y llamadas EODHD sin servir datos rancios.
