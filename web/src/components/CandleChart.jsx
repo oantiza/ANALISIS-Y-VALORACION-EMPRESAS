@@ -9,15 +9,15 @@ const BASE_OPTS = {
     fontSize: 11
   },
   grid: {
-    vertLines: { color: '#ece5d6' },
-    horzLines: { color: '#ece5d6' }
+    vertLines: { color: '#e3e8ef' },
+    horzLines: { color: '#e3e8ef' }
   },
-  rightPriceScale: { borderColor: '#dcd3c4' },
-  timeScale: { borderColor: '#dcd3c4', timeVisible: false },
+  rightPriceScale: { borderColor: '#d8dee7' },
+  timeScale: { borderColor: '#d8dee7', timeVisible: false },
   crosshair: {
     mode: CrosshairMode.Normal,
-    vertLine: { color: '#9c8459', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#9c8459' },
-    horzLine: { color: '#9c8459', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#9c8459' }
+    vertLine: { color: '#5e7ca3', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#5e7ca3' },
+    horzLine: { color: '#5e7ca3', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#5e7ca3' }
   }
 };
 
@@ -31,16 +31,16 @@ export default function CandleChart({ candles, sma50, sma200, bbUpper, bbLower, 
     const chart = createChart(el, { ...BASE_OPTS, width: el.clientWidth, height });
 
     const candleSeries = chart.addCandlestickSeries({
-      upColor: '#2e6b4e', downColor: '#a81e33',
-      borderUpColor: '#2e6b4e', borderDownColor: '#a81e33',
-      wickUpColor: '#2e6b4e', wickDownColor: '#a81e33'
+      upColor: '#1e7a46', downColor: '#c0303c',
+      borderUpColor: '#1e7a46', borderDownColor: '#c0303c',
+      wickUpColor: '#1e7a46', wickDownColor: '#c0303c'
     });
     candleSeries.setData(candles.map((c) => ({ time: c.date, open: c.open, high: c.high, low: c.low, close: c.close })));
 
     const volSeries = chart.addHistogramSeries({
       priceScaleId: 'vol',
       priceFormat: { type: 'volume' },
-      color: '#d8cfbe',
+      color: '#cbd5e0',
       lastValueVisible: false,
       priceLineVisible: false
     });
@@ -48,7 +48,7 @@ export default function CandleChart({ candles, sma50, sma200, bbUpper, bbLower, 
     volSeries.setData(candles.map((c) => ({
       time: c.date,
       value: c.volume || 0,
-      color: c.close >= c.open ? 'rgba(46,107,78,0.28)' : 'rgba(168,30,51,0.25)'
+      color: c.close >= c.open ? 'rgba(30,122,70,0.28)' : 'rgba(192,48,60,0.25)'
     })));
 
     const addLine = (data, color, width = 2, style = LineStyle.Solid) => {
@@ -58,10 +58,10 @@ export default function CandleChart({ candles, sma50, sma200, bbUpper, bbLower, 
         candles.map((c, i) => ({ time: c.date, value: data[i] })).filter((p) => p.value != null)
       );
     };
-    addLine(sma50, '#9c8459', 2);
-    addLine(sma200, '#201e1b', 2);
-    addLine(bbUpper, 'rgba(168,30,51,0.35)', 1, LineStyle.Dashed);
-    addLine(bbLower, 'rgba(168,30,51,0.35)', 1, LineStyle.Dashed);
+    addLine(sma50, '#3e76b5', 2);
+    addLine(sma200, '#1b2430', 2);
+    addLine(bbUpper, 'rgba(23,73,123,0.35)', 1, LineStyle.Dashed);
+    addLine(bbLower, 'rgba(23,73,123,0.35)', 1, LineStyle.Dashed);
 
     chart.timeScale().fitContent();
 
@@ -93,7 +93,7 @@ export function IndicatorChart({ dates, lines = [], histogram, levels = [], heig
         dates.map((d, i) => ({
           time: d,
           value: histogram[i],
-          color: (histogram[i] ?? 0) >= 0 ? 'rgba(46,107,78,0.45)' : 'rgba(168,30,51,0.45)'
+          color: (histogram[i] ?? 0) >= 0 ? 'rgba(30,122,70,0.45)' : 'rgba(192,48,60,0.45)'
         })).filter((p) => p.value != null)
       );
     }
@@ -107,7 +107,7 @@ export function IndicatorChart({ dates, lines = [], histogram, levels = [], heig
 
     for (const lv of levels) {
       (firstLine || chart.addLineSeries({ visible: false })).createPriceLine({
-        price: lv.value, color: lv.color || '#9c8459', lineWidth: 1, lineStyle: LineStyle.Dashed,
+        price: lv.value, color: lv.color || '#94a7bd', lineWidth: 1, lineStyle: LineStyle.Dashed,
         axisLabelVisible: true, title: lv.label || ''
       });
     }

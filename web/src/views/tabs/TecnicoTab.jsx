@@ -40,9 +40,9 @@ export default function TecnicoTab({ symbol, currency }) {
       >
         <div className="card">
           <div className="chart-legend">
-            <span><span className="sw" style={{ background: '#9c8459' }} />SMA 50</span>
-            <span><span className="sw" style={{ background: '#201e1b' }} />SMA 200</span>
-            {verBB && <span><span className="sw" style={{ background: 'rgba(168,30,51,0.45)' }} />Bandas de Bollinger (20, 2σ)</span>}
+            <span><span className="sw" style={{ background: '#3e76b5' }} />SMA 50</span>
+            <span><span className="sw" style={{ background: '#1b2430' }} />SMA 200</span>
+            {verBB && <span><span className="sw" style={{ background: 'rgba(23,73,123,0.45)' }} />Bandas de Bollinger (20, 2σ)</span>}
           </div>
           <CandleChart
             candles={s.candles}
@@ -59,8 +59,8 @@ export default function TecnicoTab({ symbol, currency }) {
           <div className="eyebrow" style={{ marginBottom: 8 }}>RSI (14) — 70 sobrecompra · 30 sobreventa</div>
           <IndicatorChart
             dates={dates}
-            lines={[{ data: s.rsi, color: '#a81e33' }]}
-            levels={[{ value: 70, color: '#c9a26a' }, { value: 30, color: '#c9a26a' }]}
+            lines={[{ data: s.rsi, color: '#17497b' }]}
+            levels={[{ value: 70, color: '#94a7bd' }, { value: 30, color: '#94a7bd' }]}
           />
         </div>
         <div className="card">
@@ -68,8 +68,8 @@ export default function TecnicoTab({ symbol, currency }) {
           <IndicatorChart
             dates={dates}
             lines={[
-              { data: s.macd, color: '#201e1b' },
-              { data: s.macdSignal, color: '#9c8459' }
+              { data: s.macd, color: '#1b2430' },
+              { data: s.macdSignal, color: '#3e76b5' }
             ]}
             histogram={s.macdHist}
           />

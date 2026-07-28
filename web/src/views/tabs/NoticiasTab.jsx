@@ -5,9 +5,9 @@ import { fmtDateTime } from '../../lib/format.js';
 
 function sentColor(s) {
   if (s == null) return 'transparent';
-  if (s > 0.15) return '#2e6b4e';
-  if (s < -0.15) return '#a81e33';
-  return '#9c8459';
+  if (s > 0.15) return '#1e7a46';
+  if (s < -0.15) return '#c0303c';
+  return '#8a94a3';
 }
 
 export default function NoticiasTab({ symbol, name }) {

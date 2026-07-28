@@ -4,19 +4,19 @@
    Roboto Flex, filetes bronce, acento granate) a interfaz web.
    ============================================================ */
 :root {
-  --paper: #f7f3ec;
-  --paper2: #efe9de;
-  --card: #fbf8f2;
-  --ink: #201e1b;
-  --ink2: #6b6459;
-  --ink3: #8a8272;
-  --line: #dcd3c4;
-  --line2: #eae3d5;
-  --gold: #9c8459;
-  --crimson: #a81e33;
-  --pos: #2e6b4e;
-  --neg: #b0202f;
-  --grid: #e4dcce;
+  --paper: #f5f7fa;
+  --paper2: #e9eef4;
+  --card: #ffffff;
+  --ink: #1b2430;
+  --ink2: #57606e;
+  --ink3: #8a94a3;
+  --line: #d8dee7;
+  --line2: #e8ecf2;
+  --gold: #5e7ca3;
+  --crimson: #17497b;
+  --pos: #1e7a46;
+  --neg: #c0303c;
+  --grid: #e3e8ef;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -132,7 +132,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
 .tbl thead th.l { text-align: left; padding-left: 0; }
 .tbl tbody td { padding: 7px 8px; border-bottom: 1px solid var(--line2); text-align: right; vertical-align: top; }
 .tbl tbody td.l { text-align: left; padding-left: 0; }
-.tbl tbody tr:hover { background: rgba(156, 132, 89, 0.05); }
+.tbl tbody tr:hover { background: rgba(94, 124, 163, 0.06); }
 .tbl tr.click { cursor: pointer; }
 
 /* ---------- etiquetas de estado ---------- */
@@ -140,11 +140,11 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
   display: inline-block; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
   border: 1px solid var(--line); border-radius: 2px; padding: 3px 9px; color: var(--ink2);
 }
-.tag.alcista { color: var(--pos); border-color: rgba(46, 107, 78, 0.4); }
-.tag.bajista { color: var(--neg); border-color: rgba(176, 32, 47, 0.4); }
+.tag.alcista { color: var(--pos); border-color: rgba(30, 122, 70, 0.4); }
+.tag.bajista { color: var(--neg); border-color: rgba(192, 48, 60, 0.4); }
 .tag.neutral { color: var(--ink2); }
-.tag.sobrecompra { color: var(--crimson); border-color: rgba(168, 30, 51, 0.4); }
-.tag.sobreventa { color: var(--gold); border-color: rgba(156, 132, 89, 0.5); }
+.tag.sobrecompra { color: var(--neg); border-color: rgba(192, 48, 60, 0.4); }
+.tag.sobreventa { color: #b07d2b; border-color: rgba(176, 125, 43, 0.5); }
 
 /* ---------- pestañas ---------- */
 .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin-top: 22px; flex-wrap: wrap; }
@@ -242,9 +242,9 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
    INFORME A4 (ficha imprimible) — estilo informes-oaa
    ============================================================ */
 .informe-toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 18px; }
-.a4-stage { background: #c9c2b4; padding: 22px 0; }
+.a4-stage { background: #c9cfd8; padding: 22px 0; }
 .page {
-  width: 210mm; min-height: 297mm; background: var(--paper); margin: 14px auto;
+  width: 210mm; min-height: 297mm; background: #ffffff; margin: 14px auto;
   padding: 17mm 16mm 15mm; position: relative; box-shadow: 0 2px 22px rgba(0, 0, 0, 0.14);
   font-size: 12px;
 }

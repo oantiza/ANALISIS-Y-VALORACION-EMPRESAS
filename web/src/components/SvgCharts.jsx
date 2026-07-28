@@ -2,7 +2,7 @@ import React from 'react';
 import { fmtBig } from '../lib/format.js';
 
 /** Línea/área ligera para el resumen y el informe (SVG puro, estilo OAA). */
-export function Sparkline({ candles, width = 560, height = 150, stroke = '#a81e33' }) {
+export function Sparkline({ candles, width = 560, height = 150, stroke = '#17497b' }) {
   if (!candles?.length) return null;
   const closes = candles.map((c) => c.close);
   const min = Math.min(...closes);
@@ -18,10 +18,10 @@ export function Sparkline({ candles, width = 560, height = 150, stroke = '#a81e3
   const first = candles[0], last = candles[candles.length - 1];
   return (
     <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
-      <path d={area} fill="rgba(168,30,51,0.07)" />
+      <path d={area} fill="rgba(23,73,123,0.07)" />
       <path d={path} fill="none" stroke={stroke} strokeWidth="1.8" />
-      <text x={pad} y={height - 2} fontSize="10" fill="#8a8272">{first.date}</text>
-      <text x={width - pad} y={height - 2} fontSize="10" fill="#8a8272" textAnchor="end">{last.date}</text>
+      <text x={pad} y={height - 2} fontSize="10" fill="#8a94a3">{first.date}</text>
+      <text x={width - pad} y={height - 2} fontSize="10" fill="#8a94a3" textAnchor="end">{last.date}</text>
     </svg>
   );
 }
@@ -45,16 +45,16 @@ export function DualBars({ rows, aLabel, bLabel, currency, height = 210 }) {
   return (
     <div>
       <div className="chart-legend">
-        <span><span className="sw" style={{ background: '#b99a6b' }} />{aLabel}</span>
-        <span><span className="sw" style={{ background: '#2e6b4e' }} />{bLabel}</span>
+        <span><span className="sw" style={{ background: '#7fa3c8' }} />{aLabel}</span>
+        <span><span className="sw" style={{ background: '#1e7a46' }} />{bLabel}</span>
       </div>
       <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
-        <line x1={padL} x2={width - padR} y1={zeroY} y2={zeroY} stroke="#dcd3c4" strokeWidth="1" />
+        <line x1={padL} x2={width - padR} y1={zeroY} y2={zeroY} stroke="#d8dee7" strokeWidth="1" />
         {rows.map((r, i) => {
           const cx = padL + groupW * i + groupW / 2;
           const bars = [
-            { v: r.a || 0, color: '#b99a6b', off: -barW - 2 },
-            { v: r.b || 0, color: (r.b || 0) >= 0 ? '#2e6b4e' : '#a81e33', off: 2 }
+            { v: r.a || 0, color: '#7fa3c8', off: -barW - 2 },
+            { v: r.b || 0, color: (r.b || 0) >= 0 ? '#1e7a46' : '#c0303c', off: 2 }
           ];
           return (
             <g key={r.label}>
@@ -63,7 +63,7 @@ export function DualBars({ rows, aLabel, bLabel, currency, height = 210 }) {
                 const yTop = b.v >= 0 ? zeroY - h : zeroY;
                 return <rect key={j} x={cx + b.off} y={yTop} width={barW} height={Math.max(h, 0.5)} fill={b.color} rx="1" />;
               })}
-              <text x={cx} y={height - 8} fontSize="10.5" fill="#8a8272" textAnchor="middle">{r.label}</text>
+              <text x={cx} y={height - 8} fontSize="10.5" fill="#8a94a3" textAnchor="middle">{r.label}</text>
             </g>
           );
         })}
@@ -96,11 +96,11 @@ export function Range52({ low, high, price, fmt }) {
 export function RatingBars({ ratings }) {
   if (!ratings) return null;
   const rows = [
-    ['Compra fuerte', ratings.StrongBuy, '#2e6b4e'],
-    ['Compra', ratings.Buy, '#6b8f6b'],
-    ['Mantener', ratings.Hold, '#9c8459'],
-    ['Venta', ratings.Sell, '#c06a5a'],
-    ['Venta fuerte', ratings.StrongSell, '#a81e33']
+    ['Compra fuerte', ratings.StrongBuy, '#1e7a46'],
+    ['Compra', ratings.Buy, '#5c9970'],
+    ['Mantener', ratings.Hold, '#8a94a3'],
+    ['Venta', ratings.Sell, '#cf6b60'],
+    ['Venta fuerte', ratings.StrongSell, '#c0303c']
   ];
   const total = rows.reduce((a, [, v]) => a + (v || 0), 0) || 1;
   return (
