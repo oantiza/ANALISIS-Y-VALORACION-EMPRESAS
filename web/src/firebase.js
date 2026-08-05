@@ -14,7 +14,7 @@ const firebaseConfig = {
   appId: '1:624747123295:web:f31311320d1dd1122ec1ea'
 };
 
-export const ALLOWED_EMAILS = ['oantiza@gmail.com', 'aceberiognosspelius@gmail.com'];
+export const ALLOWED_EMAILS = ['oantiza@gmail.com', 'aceberiognosspelius@gmail.com', 'albertoantiza1@gmail.com'];
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
