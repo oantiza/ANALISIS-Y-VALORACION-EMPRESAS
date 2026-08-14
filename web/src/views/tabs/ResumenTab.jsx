@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../../api.js';
 import { KpiGrid, Kpi, Section, EstadoTag } from '../../components/Kpi.jsx';
 import { Sparkline, Range52 } from '../../components/SvgCharts.jsx';
+import IndicatorInfo from '../../components/IndicatorInfo.jsx';
 import { fmtBig, fmtNum, fmtPct, fmtRatio, fmtPrice, clsPN, fmtDate, pct100 } from '../../lib/format.js';
 
 export default function ResumenTab({ symbol, fund, quote }) {
@@ -71,7 +72,7 @@ export default function ResumenTab({ symbol, fund, quote }) {
               <tbody>
                 {tech.latest.senales.map((s) => (
                   <tr key={s.nombre}>
-                    <td className="l">{s.nombre}</td>
+                    <td className="l"><IndicatorInfo name={s.nombre} /></td>
                     <td className="l muted" style={{ fontSize: 11 }}>{s.detalle}</td>
                     <td><EstadoTag estado={s.estado} /></td>
                   </tr>

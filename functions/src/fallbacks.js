@@ -64,7 +64,7 @@ export async function yahooQuote(symbol) {
 
 // --- Serie diaria (respaldo) -------------------------------------------
 export async function yahooDaily(symbol, rangeKey) {
-  const range = { '1m': '1mo', '3m': '3mo', '6m': '6mo', '1y': '1y', '2y': '2y', '5y': '5y', max: 'max' }[rangeKey] || '1y';
+  const range = { '1m': '1mo', '3m': '3mo', '6m': '6mo', '1y': '1y', '2y': '2y', '5y': '5y', '10y': '10y', max: 'max' }[rangeKey] || '1y';
   const r = await yahooChart(symbol, range, '1d');
   const ts = r.timestamp || [];
   const q = r.indicators?.quote?.[0] || {};

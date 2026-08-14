@@ -1,6 +1,7 @@
 import React from 'react';
 import { KpiGrid, Kpi, Section } from '../../components/Kpi.jsx';
 import { DualBars, RatingBars } from '../../components/SvgCharts.jsx';
+import IndicatorInfo from '../../components/IndicatorInfo.jsx';
 import { fmtBig, fmtNum, fmtPct, fmtRatio, fmtDate, clsPN, pct100 } from '../../lib/format.js';
 
 const N = (x) => (x == null || x === 'NA' ? null : Number(x));
@@ -74,7 +75,7 @@ export default function FundamentalTab({ fund }) {
             <div className="card" style={{ overflowX: 'auto' }}>
               <table className="tbl">
                 <thead>
-                  <tr><th className="l">Ejercicio</th><th>Ingresos</th><th>EBITDA</th><th>Bº operativo</th><th>Bº neto</th><th>Margen neto</th></tr>
+                  <tr><th className="l">Ejercicio</th><th><IndicatorInfo name="Ingresos" /></th><th><IndicatorInfo name="EBITDA" /></th><th><IndicatorInfo name="Bº operativo" /></th><th><IndicatorInfo name="Beneficio neto" /></th><th><IndicatorInfo name="Margen neto" /></th></tr>
                 </thead>
                 <tbody>
                   {[...income].reverse().map((r) => (
@@ -100,7 +101,7 @@ export default function FundamentalTab({ fund }) {
             <div className="eyebrow" style={{ marginBottom: 10 }}>Balance</div>
             <table className="tbl">
               <thead>
-                <tr><th className="l">Ejercicio</th><th>Activos</th><th>Patrimonio</th><th>Caja</th><th>Deuda neta</th></tr>
+                <tr><th className="l">Ejercicio</th><th><IndicatorInfo name="Activos" /></th><th><IndicatorInfo name="Patrimonio" /></th><th><IndicatorInfo name="Caja" /></th><th><IndicatorInfo name="Deuda neta" /></th></tr>
               </thead>
               <tbody>
                 {[...balance].reverse().map((r) => (
@@ -121,7 +122,7 @@ export default function FundamentalTab({ fund }) {
             <div className="eyebrow" style={{ marginBottom: 10 }}>Flujos de caja</div>
             <table className="tbl">
               <thead>
-                <tr><th className="l">Ejercicio</th><th>Flujo operativo</th><th>Capex</th><th>FCF</th><th>Dividendos</th></tr>
+                <tr><th className="l">Ejercicio</th><th><IndicatorInfo name="Flujo operativo" /></th><th><IndicatorInfo name="Capex" /></th><th><IndicatorInfo name="FCF" /></th><th><IndicatorInfo name="Dividendos" /></th></tr>
               </thead>
               <tbody>
                 {[...cashflow].reverse().map((r) => (
@@ -144,9 +145,9 @@ export default function FundamentalTab({ fund }) {
           <div className="eyebrow" style={{ marginBottom: 10 }}>Dividendos</div>
           <table className="tbl">
             <tbody>
-              <tr><td className="l">Dividendo anual estimado</td><td className="num">{sd.ForwardAnnualDividendRate != null ? fmtNum(N(sd.ForwardAnnualDividendRate), 2) : '—'}</td></tr>
-              <tr><td className="l">Rentabilidad estimada</td><td className="num">{fmtPct(pct100(sd.ForwardAnnualDividendYield), 2, false)}</td></tr>
-              <tr><td className="l">Pay-out</td><td className="num">{fmtPct(pct100(sd.PayoutRatio), 1, false)}</td></tr>
+              <tr><td className="l"><IndicatorInfo name="Dividendo anual estimado" /></td><td className="num">{sd.ForwardAnnualDividendRate != null ? fmtNum(N(sd.ForwardAnnualDividendRate), 2) : '—'}</td></tr>
+              <tr><td className="l"><IndicatorInfo name="Rentabilidad estimada" /></td><td className="num">{fmtPct(pct100(sd.ForwardAnnualDividendYield), 2, false)}</td></tr>
+              <tr><td className="l"><IndicatorInfo name="Pay-out" /></td><td className="num">{fmtPct(pct100(sd.PayoutRatio), 1, false)}</td></tr>
               <tr><td className="l">Próximo pago</td><td className="num">{fmtDate(sd.DividendDate)}</td></tr>
               <tr><td className="l">Ex-dividendo</td><td className="num">{fmtDate(sd.ExDividendDate)}</td></tr>
             </tbody>
@@ -157,9 +158,9 @@ export default function FundamentalTab({ fund }) {
           <div className="eyebrow" style={{ marginBottom: 10 }}>Accionariado</div>
           <table className="tbl">
             <tbody>
-              <tr><td className="l">Acciones en circulación</td><td className="num">{fmtBig(N(ss.SharesOutstanding))}</td></tr>
-              <tr><td className="l">% institucionales</td><td className="num">{ss.PercentInstitutions != null ? fmtPct(N(ss.PercentInstitutions), 1, false) : '—'}</td></tr>
-              <tr><td className="l">% insiders</td><td className="num">{ss.PercentInsiders != null ? fmtPct(N(ss.PercentInsiders), 2, false) : '—'}</td></tr>
+              <tr><td className="l"><IndicatorInfo name="Acciones en circulación" /></td><td className="num">{fmtBig(N(ss.SharesOutstanding))}</td></tr>
+              <tr><td className="l"><IndicatorInfo name="% institucionales" /></td><td className="num">{ss.PercentInstitutions != null ? fmtPct(N(ss.PercentInstitutions), 1, false) : '—'}</td></tr>
+              <tr><td className="l"><IndicatorInfo name="% insiders" /></td><td className="num">{ss.PercentInsiders != null ? fmtPct(N(ss.PercentInsiders), 2, false) : '—'}</td></tr>
             </tbody>
           </table>
           {instituciones.length > 0 && (
@@ -192,7 +193,7 @@ export default function FundamentalTab({ fund }) {
             <div className="eyebrow" style={{ marginBottom: 10 }}>Historial de resultados (BPA)</div>
             <table className="tbl">
               <thead>
-                <tr><th className="l">Trimestre</th><th>BPA real</th><th>Estimado</th><th>Sorpresa</th></tr>
+                <tr><th className="l">Trimestre</th><th><IndicatorInfo name="BPA real" /></th><th><IndicatorInfo name="Estimado" /></th><th><IndicatorInfo name="Sorpresa" /></th></tr>
               </thead>
               <tbody>
                 {earnHist.map((e) => (
