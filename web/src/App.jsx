@@ -6,6 +6,7 @@ import Login from './views/Login.jsx';
 import Dashboard from './views/Dashboard.jsx';
 import Company from './views/Company.jsx';
 import SearchBox from './components/SearchBox.jsx';
+import { ThemeSelector } from './components/Theme.jsx';
 
 export default function App() {
   const [user, setUser] = useState(undefined); // undefined = comprobando
@@ -37,6 +38,7 @@ export default function App() {
         </div>
         <SearchBox onPick={(item) => navigate(`/empresa/${item.symbol}`)} />
         <div className="topbar-right">
+          <ThemeSelector compact />
           <span className="user-mail">{user.email}</span>
           <button className="btn-ghost" onClick={() => signOut(auth)}>Salir</button>
         </div>

@@ -85,9 +85,9 @@ export default function TecnicoTab({ symbol, currency }) {
       >
         <div className="card">
           <div className="chart-legend">
-            <span><span className="sw" style={{ background: '#6ba7e8' }} /><IndicatorInfo name="SMA 50" /></span>
-            <span><span className="sw" style={{ background: '#e8c477' }} /><IndicatorInfo name="SMA 200" /></span>
-            {verBB && <span><span className="sw" style={{ background: 'rgba(107,167,232,0.55)' }} /><IndicatorInfo name="Bandas de Bollinger" /> (20, 2σ)</span>}
+            <span><span className="sw" style={{ background: 'var(--sma50)' }} /><IndicatorInfo name="SMA 50" /></span>
+            <span><span className="sw" style={{ background: 'var(--sma200)' }} /><IndicatorInfo name="SMA 200" /></span>
+            {verBB && <span><span className="sw" style={{ background: 'var(--bb)' }} /><IndicatorInfo name="Bandas de Bollinger" /> (20, 2σ)</span>}
           </div>
           <CandleChart
             candles={s.candles}
@@ -105,8 +105,8 @@ export default function TecnicoTab({ symbol, currency }) {
           <div className="eyebrow indicator-heading" style={{ marginBottom: 8 }}><IndicatorInfo name="RSI (14)" /><span>— 70 sobrecompra · 30 sobreventa</span></div>
           <IndicatorChart
             dates={dates}
-            lines={[{ data: s.rsi, color: '#c5a46d' }]}
-            levels={[{ value: 70, color: '#718093' }, { value: 30, color: '#718093' }]}
+            lines={[{ data: s.rsi, color: '--gold' }]}
+            levels={[{ value: 70, color: '--ink3' }, { value: 30, color: '--ink3' }]}
           />
         </div>
         <div className="card">
@@ -114,8 +114,8 @@ export default function TecnicoTab({ symbol, currency }) {
           <IndicatorChart
             dates={dates}
             lines={[
-              { data: s.macd, color: '#e8c477' },
-              { data: s.macdSignal, color: '#6ba7e8' }
+              { data: s.macd, color: '--sma200' },
+              { data: s.macdSignal, color: '--sma50' }
             ]}
             histogram={s.macdHist}
           />
