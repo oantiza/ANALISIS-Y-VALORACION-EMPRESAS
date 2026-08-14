@@ -46,7 +46,7 @@ export function DualBars({ rows, aLabel, bLabel, currency, height = 210 }) {
   return (
     <div>
       <div className="chart-legend">
-        <span><span className="sw" style={{ background: '#6ba7e8' }} /><IndicatorInfo name={aLabel} /></span>
+        <span><span className="sw" style={{ background: 'var(--sma50)' }} /><IndicatorInfo name={aLabel} /></span>
         <span><span className="sw" style={{ background: 'var(--pos)' }} /><IndicatorInfo name={bLabel} /></span>
       </div>
       <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
@@ -54,7 +54,7 @@ export function DualBars({ rows, aLabel, bLabel, currency, height = 210 }) {
         {rows.map((r, i) => {
           const cx = padL + groupW * i + groupW / 2;
           const bars = [
-            { v: r.a || 0, color: '#6ba7e8', off: -barW - 2 },
+            { v: r.a || 0, color: 'var(--sma50)', off: -barW - 2 },
             { v: r.b || 0, color: (r.b || 0) >= 0 ? 'var(--pos)' : 'var(--neg)', off: 2 }
           ];
           return (

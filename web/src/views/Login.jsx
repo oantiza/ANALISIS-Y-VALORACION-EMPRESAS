@@ -3,6 +3,7 @@ import {
   signInWithPopup, signInWithRedirect, getRedirectResult, signInWithEmailAndPassword
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase.js';
+import { ThemeSelector } from '../components/Theme.jsx';
 
 const esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -61,6 +62,7 @@ export default function Login({ denegado }) {
 
   return (
     <div className="login-wrap">
+      <div className="login-theme"><ThemeSelector /></div>
       <div className="login-card">
         <div className="b1">O.A.A</div>
         <div className="b2">Análisis de Empresas</div>
