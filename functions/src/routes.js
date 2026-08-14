@@ -8,6 +8,7 @@ import { yahooQuote, yahooDaily, stooqDaily, googleNewsRss, mergeNews } from './
 import { computeTechnicals } from './technicals.js';
 
 const RANGES_DAYS = { '1m': 31, '3m': 92, '6m': 183, '1y': 366, '2y': 731, '5y': 1827, max: 15000 };
+const TECH_RANGES = new Set(['1y', '3y', '5y']);
 
 function fromDate(rangeKey) {
   const days = RANGES_DAYS[rangeKey] ?? 366;
@@ -125,19 +126,23 @@ export function buildRouter() {
     } catch (err) { next(err); }
   });
 
-  // --- Técnicos calculados en el servidor (2 años de base) ---
+  // --- Técnicos calculados en el servidor (hasta 5 años visibles) ---
   r.get('/technicals/:symbol', async (req, res, next) => {
     try {
       const symbol = normSymbol(req.params.symbol);
-      const out = await cached(`tech_${symbol}`, TTL.technicals, async () => {
+      const requestedRange = String(req.query.range || '1y');
+      const range = TECH_RANGES.has(requestedRange) ? requestedRange : '1y';
+      const warmupDays = { '1y': 2 * 366, '3y': 4 * 366, '5y': 6 * 366 }[range];
+      const yahooRange = { '1y': '2y', '3y': '5y', '5y': '10y' }[range];
+      const out = await cached(`tech_${symbol}_${range}`, TTL.technicals, async () => {
         const eod = await firstOk([
-          ['eodhd', () => eodhd.getEod(symbol, fromDate('2y'))],
-          ['yahoo', () => yahooDaily(symbol, '2y')]
+          ['eodhd', () => eodhd.getEod(symbol, new Date(Date.now() - warmupDays * 86400_000).toISOString().slice(0, 10))],
+          ['yahoo', () => yahooDaily(symbol, yahooRange)]
         ]);
-        const pack = computeTechnicals(eod.data);
+        const pack = computeTechnicals(eod.data, range);
         return { data: pack, source: eod.source };
       });
-      res.json({ symbol, source: out.source, fetchedAt: out.fetchedAt, ...out.data });
+      res.json({ symbol, range, source: out.source, fetchedAt: out.fetchedAt, ...out.data });
     } catch (err) { next(err); }
   });
 

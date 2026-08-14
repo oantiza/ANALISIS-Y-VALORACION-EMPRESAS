@@ -2,17 +2,47 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../../api.js';
 import { Section, EstadoTag, KpiGrid, Kpi } from '../../components/Kpi.jsx';
 import CandleChart, { IndicatorChart } from '../../components/CandleChart.jsx';
+import IndicatorInfo from '../../components/IndicatorInfo.jsx';
 import { fmtNum, fmtPct, fmtPrice, clsPN } from '../../lib/format.js';
+
+const CHART_RANGES = [
+  { key: '6m', label: '6M', days: 183 },
+  { key: '1y', label: '1A', days: 366 },
+  { key: '3y', label: '3A', days: 3 * 366 },
+  { key: '5y', label: '5A', days: 5 * 366 }
+];
+
+function visibleSeries(series, rangeKey) {
+  const range = CHART_RANGES.find((item) => item.key === rangeKey) || CHART_RANGES[1];
+  const candles = series?.candles || [];
+  if (!candles.length) return series;
+  const end = new Date(candles[candles.length - 1].date).getTime();
+  const cutoff = new Date(end - range.days * 86400_000).toISOString().slice(0, 10);
+  const start = Math.max(0, candles.findIndex((c) => c.date >= cutoff));
+  const slice = (values) => values?.slice(start);
+  return {
+    candles: candles.slice(start),
+    sma50: slice(series.sma50),
+    sma200: slice(series.sma200),
+    bbUpper: slice(series.bbUpper),
+    bbLower: slice(series.bbLower),
+    rsi: slice(series.rsi),
+    macd: slice(series.macd),
+    macdSignal: slice(series.macdSignal),
+    macdHist: slice(series.macdHist)
+  };
+}
 
 export default function TecnicoTab({ symbol, currency }) {
   const [tech, setTech] = useState(null);
   const [error, setError] = useState(null);
   const [verBB, setVerBB] = useState(false);
+  const [chartRange, setChartRange] = useState('1y');
 
   useEffect(() => {
     let alive = true;
     setTech(null); setError(null);
-    api(`/technicals/${symbol}`)
+    api(`/technicals/${symbol}?range=5y`)
       .then((r) => alive && setTech(r))
       .catch((e) => alive && setError(e.message));
     return () => { alive = false; };
@@ -22,16 +52,31 @@ export default function TecnicoTab({ symbol, currency }) {
   if (!tech) return <div className="loading">Calculando indicadores…</div>;
   if (tech.error) return <div className="error-box section">{tech.error}</div>;
 
-  const { latest: l, series: s } = tech;
+  const { latest: l } = tech;
+  const s = visibleSeries(tech.series, chartRange);
   const dates = s.candles.map((c) => c.date);
+  const rangeName = CHART_RANGES.find((item) => item.key === chartRange)?.label || '1A';
 
   return (
     <>
       <Section
-        eyebrow="Precio · último año"
+        eyebrow={`Precio · ${rangeName}`}
         title="Evolución"
         right={
-          <div className="range-btns no-print">
+          <div className="chart-controls no-print">
+            <div className="range-btns" role="group" aria-label="Periodo del gráfico">
+              {CHART_RANGES.map((item) => (
+                <button
+                  key={item.key}
+                  className={`range-btn${chartRange === item.key ? ' active' : ''}`}
+                  type="button"
+                  aria-pressed={chartRange === item.key}
+                  onClick={() => setChartRange(item.key)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
             <button className={`range-btn${verBB ? ' active' : ''}`} onClick={() => setVerBB(!verBB)}>
               Bollinger
             </button>
@@ -40,9 +85,9 @@ export default function TecnicoTab({ symbol, currency }) {
       >
         <div className="card">
           <div className="chart-legend">
-            <span><span className="sw" style={{ background: '#3e76b5' }} />SMA 50</span>
-            <span><span className="sw" style={{ background: '#1b2430' }} />SMA 200</span>
-            {verBB && <span><span className="sw" style={{ background: 'rgba(23,73,123,0.45)' }} />Bandas de Bollinger (20, 2σ)</span>}
+            <span><span className="sw" style={{ background: '#6ba7e8' }} /><IndicatorInfo name="SMA 50" /></span>
+            <span><span className="sw" style={{ background: '#e8c477' }} /><IndicatorInfo name="SMA 200" /></span>
+            {verBB && <span><span className="sw" style={{ background: 'rgba(107,167,232,0.55)' }} /><IndicatorInfo name="Bandas de Bollinger" /> (20, 2σ)</span>}
           </div>
           <CandleChart
             candles={s.candles}
@@ -51,25 +96,26 @@ export default function TecnicoTab({ symbol, currency }) {
             bbUpper={verBB ? s.bbUpper : null}
             bbLower={verBB ? s.bbLower : null}
           />
+          <div className="chart-hint">Arrastra para desplazarte · pellizca o usa la rueda para ampliar</div>
         </div>
       </Section>
 
       <div className="grid2 section">
         <div className="card">
-          <div className="eyebrow" style={{ marginBottom: 8 }}>RSI (14) — 70 sobrecompra · 30 sobreventa</div>
+          <div className="eyebrow indicator-heading" style={{ marginBottom: 8 }}><IndicatorInfo name="RSI (14)" /><span>— 70 sobrecompra · 30 sobreventa</span></div>
           <IndicatorChart
             dates={dates}
-            lines={[{ data: s.rsi, color: '#17497b' }]}
-            levels={[{ value: 70, color: '#94a7bd' }, { value: 30, color: '#94a7bd' }]}
+            lines={[{ data: s.rsi, color: '#c5a46d' }]}
+            levels={[{ value: 70, color: '#718093' }, { value: 30, color: '#718093' }]}
           />
         </div>
         <div className="card">
-          <div className="eyebrow" style={{ marginBottom: 8 }}>MACD (12, 26, 9)</div>
+          <div className="eyebrow indicator-heading" style={{ marginBottom: 8 }}><IndicatorInfo name="MACD" /><span>(12, 26, 9)</span></div>
           <IndicatorChart
             dates={dates}
             lines={[
-              { data: s.macd, color: '#1b2430' },
-              { data: s.macdSignal, color: '#3e76b5' }
+              { data: s.macd, color: '#e8c477' },
+              { data: s.macdSignal, color: '#6ba7e8' }
             ]}
             histogram={s.macdHist}
           />
@@ -82,7 +128,7 @@ export default function TecnicoTab({ symbol, currency }) {
             <tbody>
               {l.senales.map((sig) => (
                 <tr key={sig.nombre}>
-                  <td className="l" style={{ width: 170 }}><strong>{sig.nombre}</strong></td>
+                  <td className="l" style={{ width: 170 }}><strong><IndicatorInfo name={sig.nombre} /></strong></td>
                   <td className="l muted">{sig.detalle}</td>
                   <td style={{ width: 130 }}><EstadoTag estado={sig.estado} /></td>
                 </tr>

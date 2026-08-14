@@ -4,20 +4,31 @@ import { createChart, ColorType, CrosshairMode, LineStyle } from 'lightweight-ch
 const BASE_OPTS = {
   layout: {
     background: { type: ColorType.Solid, color: 'transparent' },
-    textColor: '#8a8272',
+    textColor: '#8290a3',
     fontFamily: "'Roboto Flex', system-ui, sans-serif",
     fontSize: 11
   },
   grid: {
-    vertLines: { color: '#e3e8ef' },
-    horzLines: { color: '#e3e8ef' }
+    vertLines: { color: '#1a2530' },
+    horzLines: { color: '#1a2530' }
   },
-  rightPriceScale: { borderColor: '#d8dee7' },
-  timeScale: { borderColor: '#d8dee7', timeVisible: false },
+  rightPriceScale: { borderColor: '#2a3542' },
+  timeScale: { borderColor: '#2a3542', timeVisible: false },
   crosshair: {
     mode: CrosshairMode.Normal,
-    vertLine: { color: '#5e7ca3', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#5e7ca3' },
-    horzLine: { color: '#5e7ca3', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#5e7ca3' }
+    vertLine: { color: '#c5a46d', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#735f3f' },
+    horzLine: { color: '#c5a46d', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#735f3f' }
+  },
+  handleScroll: {
+    mouseWheel: true,
+    pressedMouseMove: true,
+    horzTouchDrag: true,
+    vertTouchDrag: false
+  },
+  handleScale: {
+    axisPressedMouseMove: true,
+    mouseWheel: true,
+    pinch: true
   }
 };
 
@@ -31,16 +42,16 @@ export default function CandleChart({ candles, sma50, sma200, bbUpper, bbLower, 
     const chart = createChart(el, { ...BASE_OPTS, width: el.clientWidth, height });
 
     const candleSeries = chart.addCandlestickSeries({
-      upColor: '#1e7a46', downColor: '#c0303c',
-      borderUpColor: '#1e7a46', borderDownColor: '#c0303c',
-      wickUpColor: '#1e7a46', wickDownColor: '#c0303c'
+      upColor: '#55c68a', downColor: '#ff6878',
+      borderUpColor: '#55c68a', borderDownColor: '#ff6878',
+      wickUpColor: '#55c68a', wickDownColor: '#ff6878'
     });
     candleSeries.setData(candles.map((c) => ({ time: c.date, open: c.open, high: c.high, low: c.low, close: c.close })));
 
     const volSeries = chart.addHistogramSeries({
       priceScaleId: 'vol',
       priceFormat: { type: 'volume' },
-      color: '#cbd5e0',
+      color: '#344252',
       lastValueVisible: false,
       priceLineVisible: false
     });
@@ -48,7 +59,7 @@ export default function CandleChart({ candles, sma50, sma200, bbUpper, bbLower, 
     volSeries.setData(candles.map((c) => ({
       time: c.date,
       value: c.volume || 0,
-      color: c.close >= c.open ? 'rgba(30,122,70,0.28)' : 'rgba(192,48,60,0.25)'
+      color: c.close >= c.open ? 'rgba(85,198,138,0.28)' : 'rgba(255,104,120,0.25)'
     })));
 
     const addLine = (data, color, width = 2, style = LineStyle.Solid) => {
@@ -58,10 +69,10 @@ export default function CandleChart({ candles, sma50, sma200, bbUpper, bbLower, 
         candles.map((c, i) => ({ time: c.date, value: data[i] })).filter((p) => p.value != null)
       );
     };
-    addLine(sma50, '#3e76b5', 2);
-    addLine(sma200, '#1b2430', 2);
-    addLine(bbUpper, 'rgba(23,73,123,0.35)', 1, LineStyle.Dashed);
-    addLine(bbLower, 'rgba(23,73,123,0.35)', 1, LineStyle.Dashed);
+    addLine(sma50, '#6ba7e8', 2);
+    addLine(sma200, '#e8c477', 2);
+    addLine(bbUpper, 'rgba(107,167,232,0.35)', 1, LineStyle.Dashed);
+    addLine(bbLower, 'rgba(107,167,232,0.35)', 1, LineStyle.Dashed);
 
     chart.timeScale().fitContent();
 
@@ -93,7 +104,7 @@ export function IndicatorChart({ dates, lines = [], histogram, levels = [], heig
         dates.map((d, i) => ({
           time: d,
           value: histogram[i],
-          color: (histogram[i] ?? 0) >= 0 ? 'rgba(30,122,70,0.45)' : 'rgba(192,48,60,0.45)'
+          color: (histogram[i] ?? 0) >= 0 ? 'rgba(85,198,138,0.48)' : 'rgba(255,104,120,0.48)'
         })).filter((p) => p.value != null)
       );
     }
@@ -107,7 +118,7 @@ export function IndicatorChart({ dates, lines = [], histogram, levels = [], heig
 
     for (const lv of levels) {
       (firstLine || chart.addLineSeries({ visible: false })).createPriceLine({
-        price: lv.value, color: lv.color || '#94a7bd', lineWidth: 1, lineStyle: LineStyle.Dashed,
+        price: lv.value, color: lv.color || '#718093', lineWidth: 1, lineStyle: LineStyle.Dashed,
         axisLabelVisible: true, title: lv.label || ''
       });
     }

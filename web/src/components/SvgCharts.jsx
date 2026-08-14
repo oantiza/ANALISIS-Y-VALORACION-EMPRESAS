@@ -1,8 +1,9 @@
 import React from 'react';
 import { fmtBig } from '../lib/format.js';
+import IndicatorInfo from './IndicatorInfo.jsx';
 
 /** Línea/área ligera para el resumen y el informe (SVG puro, estilo OAA). */
-export function Sparkline({ candles, width = 560, height = 150, stroke = '#17497b' }) {
+export function Sparkline({ candles, width = 560, height = 150, stroke = 'var(--crimson)' }) {
   if (!candles?.length) return null;
   const closes = candles.map((c) => c.close);
   const min = Math.min(...closes);
@@ -18,10 +19,10 @@ export function Sparkline({ candles, width = 560, height = 150, stroke = '#17497
   const first = candles[0], last = candles[candles.length - 1];
   return (
     <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
-      <path d={area} fill="rgba(23,73,123,0.07)" />
+      <path d={area} fill="var(--chart-area)" />
       <path d={path} fill="none" stroke={stroke} strokeWidth="1.8" />
-      <text x={pad} y={height - 2} fontSize="10" fill="#8a94a3">{first.date}</text>
-      <text x={width - pad} y={height - 2} fontSize="10" fill="#8a94a3" textAnchor="end">{last.date}</text>
+      <text x={pad} y={height - 2} fontSize="10" fill="var(--ink3)">{first.date}</text>
+      <text x={width - pad} y={height - 2} fontSize="10" fill="var(--ink3)" textAnchor="end">{last.date}</text>
     </svg>
   );
 }
@@ -45,16 +46,16 @@ export function DualBars({ rows, aLabel, bLabel, currency, height = 210 }) {
   return (
     <div>
       <div className="chart-legend">
-        <span><span className="sw" style={{ background: '#7fa3c8' }} />{aLabel}</span>
-        <span><span className="sw" style={{ background: '#1e7a46' }} />{bLabel}</span>
+        <span><span className="sw" style={{ background: '#6ba7e8' }} /><IndicatorInfo name={aLabel} /></span>
+        <span><span className="sw" style={{ background: 'var(--pos)' }} /><IndicatorInfo name={bLabel} /></span>
       </div>
       <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
-        <line x1={padL} x2={width - padR} y1={zeroY} y2={zeroY} stroke="#d8dee7" strokeWidth="1" />
+        <line x1={padL} x2={width - padR} y1={zeroY} y2={zeroY} stroke="var(--line)" strokeWidth="1" />
         {rows.map((r, i) => {
           const cx = padL + groupW * i + groupW / 2;
           const bars = [
-            { v: r.a || 0, color: '#7fa3c8', off: -barW - 2 },
-            { v: r.b || 0, color: (r.b || 0) >= 0 ? '#1e7a46' : '#c0303c', off: 2 }
+            { v: r.a || 0, color: '#6ba7e8', off: -barW - 2 },
+            { v: r.b || 0, color: (r.b || 0) >= 0 ? 'var(--pos)' : 'var(--neg)', off: 2 }
           ];
           return (
             <g key={r.label}>
@@ -63,7 +64,7 @@ export function DualBars({ rows, aLabel, bLabel, currency, height = 210 }) {
                 const yTop = b.v >= 0 ? zeroY - h : zeroY;
                 return <rect key={j} x={cx + b.off} y={yTop} width={barW} height={Math.max(h, 0.5)} fill={b.color} rx="1" />;
               })}
-              <text x={cx} y={height - 8} fontSize="10.5" fill="#8a94a3" textAnchor="middle">{r.label}</text>
+              <text x={cx} y={height - 8} fontSize="10.5" fill="var(--ink3)" textAnchor="middle">{r.label}</text>
             </g>
           );
         })}

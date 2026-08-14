@@ -133,9 +133,9 @@ function annualVol(closes, days = 30) {
 
 /**
  * Calcula el paquete técnico completo a partir de velas diarias (orden ascendente).
- * Devuelve series alineadas por fecha (último año para el gráfico) y una foto actual con señales.
+ * Devuelve series alineadas por fecha para el rango solicitado y una foto actual con señales.
  */
-export function computeTechnicals(candles) {
+export function computeTechnicals(candles, seriesRange = '1y') {
   if (!candles || candles.length < 30) {
     return { error: 'Serie insuficiente para análisis técnico (mínimo 30 sesiones)' };
   }
@@ -152,6 +152,10 @@ export function computeTechnicals(candles) {
   const i = candles.length - 1;
   const last = candles[i];
   const yearAgoIdx = Math.max(0, candles.length - 252);
+  const seriesDays = { '1y': 366, '3y': 3 * 366, '5y': 5 * 366 }[seriesRange] ?? 366;
+  const seriesCutoff = new Date(new Date(last.date).getTime() - seriesDays * 86400_000).toISOString().slice(0, 10);
+  const firstVisible = candles.findIndex((c) => c.date >= seriesCutoff);
+  const seriesStartIdx = firstVisible === -1 ? 0 : firstVisible;
   const yearCloses = closes.slice(yearAgoIdx);
   const high52 = Math.max(...candles.slice(yearAgoIdx).map((c) => c.high));
   const low52 = Math.min(...candles.slice(yearAgoIdx).map((c) => c.low));
@@ -183,10 +187,10 @@ export function computeTechnicals(candles) {
 
   latest.senales = buildSignals(latest, sma50[i], sma200[i], sma50[i - 5], sma200[i - 5]);
 
-  // Series del último año para el gráfico (aligeradas)
-  const s = (arr) => arr.slice(yearAgoIdx).map(rnd);
+  // Series del rango visible para el gráfico; los cálculos conservan el histórico de calentamiento.
+  const s = (arr) => arr.slice(seriesStartIdx).map(rnd);
   const series = {
-    candles: candles.slice(yearAgoIdx),
+    candles: candles.slice(seriesStartIdx),
     sma50: s(sma50),
     sma200: s(sma200),
     bbUpper: s(bb.upper),

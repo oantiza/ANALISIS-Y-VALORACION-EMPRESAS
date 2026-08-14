@@ -1,4 +1,5 @@
 import React from 'react';
+import IndicatorInfo from './IndicatorInfo.jsx';
 
 export function KpiGrid({ children }) {
   return <div className="kpis">{children}</div>;
@@ -7,7 +8,7 @@ export function KpiGrid({ children }) {
 export function Kpi({ label, value, sub, cls = '' }) {
   return (
     <div className="kpi">
-      <div className="k">{label}</div>
+      <div className="k"><IndicatorInfo name={label} /></div>
       <div className={`v ${cls}`}>{value ?? '—'}</div>
       {sub && <div className="s">{sub}</div>}
     </div>
